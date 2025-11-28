@@ -1,11 +1,4 @@
 """
-Data Preparation Script for MPI Bootstrap Analysis
-===================================================
-Creates the modeling dataset (cdi_model_data.csv) from the raw CDC data.
-
-This script replicates the data cleaning from the Jupyter notebook
-and produces a clean CSV with columns: obesity, smoking, diabetes
-
 Run this BEFORE running mpi_bootstrap.py
 
 Usage:
@@ -97,15 +90,20 @@ def main():
     # Step 6: Rename columns and drop missing
     # ----------------------------------------------------------
     col_map = {
+        "LocationAbbr": "state",
+        "YearStart": "year",
         "Obesity among adults": "obesity",
         "Current cigarette smoking among adults": "smoking",
         "Diabetes among adults": "diabetes"
     }
     wide = wide.rename(columns=col_map)
 
-    # Keep only required columns
-    model_cols = ["obesity", "smoking", "diabetes"]
+    # Keep required columns (including year for RQ3 COVID analysis)
+    model_cols = ["state", "year", "obesity", "smoking", "diabetes"]
     df_model = wide[model_cols].dropna()
+
+    # Add COVID flag for RQ3 (2020+ = COVID period)
+    df_model["covid_flag"] = (df_model["year"] >= 2020).astype(int)
 
     print(f"Final modeling data: {len(df_model)} observations")
     print(f"Columns: {list(df_model.columns)}")
@@ -114,7 +112,11 @@ def main():
     # Step 7: Summary statistics
     # ----------------------------------------------------------
     print("\nSummary statistics:")
-    print(df_model.describe().round(2))
+    print(df_model[["obesity", "smoking", "diabetes"]].describe().round(2))
+
+    print(f"\nYears in data: {sorted(df_model['year'].unique())}")
+    print(f"Pre-COVID observations: {(df_model['covid_flag'] == 0).sum()}")
+    print(f"COVID observations: {(df_model['covid_flag'] == 1).sum()}")
 
     # ----------------------------------------------------------
     # Step 8: Save to CSV
@@ -124,7 +126,7 @@ def main():
 
     # Also show correlations as sanity check
     print("\nCorrelation matrix (sanity check):")
-    print(df_model.corr().round(3))
+    print(df_model[["obesity", "smoking", "diabetes"]].corr().round(3))
 
     print("\nData preparation complete!")
 

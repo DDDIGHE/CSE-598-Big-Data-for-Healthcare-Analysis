@@ -12,6 +12,9 @@ This repository contains the code and documentation for the final project of AMS
 | `prepare_data.py` | Data preparation script for MPI analysis |
 | `mpi_bootstrap.py` | MPI4py parallel bootstrap script (Step 6) |
 | `run_bootstrap.slurm` | SLURM job submission file for SeaWulf |
+| `6. MPI4py parallel implementation_summary.md` | Summary report for Step 6 |
+| `bootstrap_results.csv` | Bootstrap samples output (generated on HPC) |
+| `bootstrap_summary.txt` | Bootstrap confidence intervals summary (generated on HPC) |
 
 ## HPC Usage (Step 6)
 
@@ -28,7 +31,9 @@ run_bootstrap.slurm
 # 1. Prepare the modeling data
 python prepare_data.py
 
-# 2. Submit the MPI job
+# 2. CHANGE THE WORK DIR!
+
+# 3. Submit the MPI job
 sbatch run_bootstrap.slurm
 ```
 
